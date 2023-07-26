@@ -1,0 +1,19 @@
+{
+    "name": "policyreporter/lazy-base",
+    "description": "An alternative database handle for PHP",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Policyreporter\\LazyBase\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "alex-munkelwitz-pr",
+            "email": "alex@policyreporter.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
