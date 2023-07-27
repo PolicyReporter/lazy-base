@@ -1,11 +1,11 @@
 {
-    "name": "policyreporter/lazy-base",
+    "name": "policy-reporter/lazy-base",
     "description": "An alternative database handle for PHP",
     "type": "library",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Policyreporter\\LazyBase\\": "src/"
+            "PolicyReporter\\LazyBase\\": "src/"
         }
     },
     "authors": [
