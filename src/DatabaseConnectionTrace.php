@@ -1,6 +1,6 @@
 <?php
 
-namespace PolicyReporter\LazyBase;
+namespace Policyreporter\LazyBase;
 
 class DatabaseConnectionTrace
 {

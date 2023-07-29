@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PolicyReporter\LazyBase\Factory;
+namespace Policyreporter\LazyBase\Factory;
 
 require_once('lib/generalfunctions.php');
 

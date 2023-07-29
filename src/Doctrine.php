@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PolicyReporter\LazyBase;
+namespace Policyreporter\LazyBase;
 
 abstract class Doctrine extends \Doctrine\DBAL\Connection
 {

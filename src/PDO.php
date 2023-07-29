@@ -1,8 +1,8 @@
 <?php
 
-namespace PolicyReporter\LazyBase;
+namespace Policyreporter\LazyBase;
 
-use PolicyReporter\LazyBase\Lazy;
+use Policyreporter\LazyBase\Lazy;
 use Exception;
 
 /**

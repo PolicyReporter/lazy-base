@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PolicyReporter\LazyBase\Doctrine;
+namespace Policyreporter\LazyBase\Doctrine;
 
 class Driver extends \Doctrine\DBAL\Driver\AbstractPostgreSQLDriver
 {

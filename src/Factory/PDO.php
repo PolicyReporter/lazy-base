@@ -3,7 +3,7 @@
 // We cannot declare strict types as we're leaning on type coersion to protect our DB password in any data dumps
 // declare(strict_types=1);
 
-namespace PolicyReporter\LazyBase\Factory;
+namespace Policyreporter\LazyBase\Factory;
 
 use Laminas\ServiceManager\Factory\FactoryInterface;
 

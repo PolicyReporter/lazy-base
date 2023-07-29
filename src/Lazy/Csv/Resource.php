@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PolicyReporter\LazyBase\Lazy\Csv;
+namespace Policyreporter\LazyBase\Lazy\Csv;
 
 class Resource extends \Policyreporter\LazyBase\Lazy\Csv
 {

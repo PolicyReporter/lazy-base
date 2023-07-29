@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PolicyReporter\LazyBase\Lazy;
+namespace Policyreporter\LazyBase\Lazy;
 
 /**
  * This is an inner class for PDO only, do not use directly

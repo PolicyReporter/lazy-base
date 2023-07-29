@@ -1,6 +1,6 @@
 <?php
 
-namespace PolicyReporter\LazyBase\Lazy;
+namespace Policyreporter\LazyBase\Lazy;
 
 class ArrayObject extends AbstractWrappingIterator
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PolicyReporter\LazyBase\Doctrine;
+namespace Policyreporter\LazyBase\Doctrine;
 
 class Result implements \Doctrine\DBAL\Driver\Result
 {

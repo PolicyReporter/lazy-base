@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PolicyReporter\LazyBase\PDO;
+namespace Policyreporter\LazyBase\PDO;
 
 /**
  * This class exists to serve as a dummy ancestor for classes that must extend

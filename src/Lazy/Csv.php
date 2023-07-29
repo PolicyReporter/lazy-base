@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PolicyReporter\LazyBase\Lazy;
+namespace Policyreporter\LazyBase\Lazy;
 
 abstract class Csv extends AbstractIterator
 {
