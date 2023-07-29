@@ -31,13 +31,13 @@ class Connection implements \Doctrine\DBAL\Driver\ServerInfoAwareConnection
     public function prepare(string $sql): \Doctrine\DBAL\Driver\Statement
     {
         $stmt = $this->connection->prepare($sql);
-        return new \PolicyReporter\LazyBase\Doctrine\Statement($stmt);
+        return new \Policyreporter\LazyBase\Doctrine\Statement($stmt);
     }
 
-    public function query(string $sql): \PolicyReporter\LazyBase\Doctrine\Result
+    public function query(string $sql): \Policyreporter\LazyBase\Doctrine\Result
     {
         $stmt = $this->connection->query($sql);
-        return new \PolicyReporter\LazyBase\Doctrine\Result($stmt);
+        return new \Policyreporter\LazyBase\Doctrine\Result($stmt);
     }
 
     public function quote($value, $type = \Doctrine\DBAL\ParameterType::STRING)
@@ -100,7 +100,7 @@ class Connection implements \Doctrine\DBAL\Driver\ServerInfoAwareConnection
         array $params = [],
         $types = [],
         ?\Doctrine\DBAL\Cache\QueryCacheProfile $qcp = null
-    ): \PolicyReporter\LazyBase\Doctrine\Result {
+    ): \Policyreporter\LazyBase\Doctrine\Result {
         if ($qcp !== null) {
             return $this->executeCacheQuery($sql, $params, $types, $qcp);
         }
@@ -129,7 +129,7 @@ class Connection implements \Doctrine\DBAL\Driver\ServerInfoAwareConnection
                 $result = $connection->query($sql);
             }
 
-            return new \PolicyReporter\LazyBase\Doctrine\Result($result, $this);
+            return new \Policyreporter\LazyBase\Doctrine\Result($result, $this);
         } catch (\Doctrine\Dbal\Driver\Exception $e) {
             throw $this->convertExceptionDuringQuery($e, $sql, $params, $types);
         } finally {

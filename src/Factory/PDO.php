@@ -30,7 +30,7 @@ abstract class PDO implements FactoryInterface
     protected function openHandle(
         string $className,
         array $options,
-    ): \PolicyReporter\LazyBase\PDO {
+    ): \Policyreporter\LazyBase\PDO {
         if ($options['handleName'] !== null && !empty(self::$handles[$options['handleName']])) {
             $handle = self::$handles[$options['handleName']];
         } else {
@@ -45,7 +45,7 @@ abstract class PDO implements FactoryInterface
                 throw new \Exception\System('No connection');
             }
 
-            $this->databaseConnectionTrace = new \PolicyReporter\LazyBase\DatabaseConnectionTrace(
+            $this->databaseConnectionTrace = new \Policyreporter\LazyBase\DatabaseConnectionTrace(
                 $handle,
                 $options['logger'] ?? null,
                 $options['handleName'] ? $options['handleName'] : get_class($this)

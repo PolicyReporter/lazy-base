@@ -18,7 +18,7 @@ namespace PolicyReporter\LazyBase\Lazy;
  */
 class PDOStatement extends AbstractIterator
 {
-    use \PolicyReporter\LazyBase\Deprecated;
+    use \Policyreporter\LazyBase\Deprecated;
 
     protected $statement;
 

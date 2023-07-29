@@ -45,7 +45,7 @@ abstract class Doctrine extends \Doctrine\DBAL\Connection
             throw $this->convertExceptionDuringQuery($e, $sql);
         }
 
-        return new \PolicyReporter\LazyBase\Doctrine\Statement($statement);
+        return new \Policyreporter\LazyBase\Doctrine\Statement($statement);
     }
 
     public function executeWrappedQuery(
@@ -53,7 +53,7 @@ abstract class Doctrine extends \Doctrine\DBAL\Connection
         array $params = [],
         $types = [],
         ?\Doctrine\DBAL\Cache\QueryCacheProfile $qcp = null
-    ): \PolicyReporter\LazyBase\Lazy\AbstractIterator {
+    ): \Policyreporter\LazyBase\Lazy\AbstractIterator {
         return $this->getNativeConnection()->run($sql, $params);
     }
 
@@ -112,7 +112,7 @@ abstract class Doctrine extends \Doctrine\DBAL\Connection
         ];
     }
 
-    protected function bindTypedValues(\PolicyReporter\LazyBase\Doctrine\Statement $stmt, array $params, array $types): void
+    protected function bindTypedValues(\Policyreporter\LazyBase\Doctrine\Statement $stmt, array $params, array $types): void
     {
         // Check whether parameters are positional or named. Mixing is not allowed.
         if (is_int(key($params))) {

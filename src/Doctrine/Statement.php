@@ -18,12 +18,12 @@ class Statement implements \Doctrine\DBAL\Driver\Statement
         ParameterType::BOOLEAN => \PDO::PARAM_BOOL,
     ];
     private $stmt;
-    public function __construct(\PolicyReporter\LazyBase\Lazy\PDOStatement $stmt)
+    public function __construct(\Policyreporter\LazyBase\Lazy\PDOStatement $stmt)
     {
         $this->stmt = $stmt;
     }
 
-    public function statement(): \PolicyReporter\LazyBase\Lazy\PDOStatement
+    public function statement(): \Policyreporter\LazyBase\Lazy\PDOStatement
     {
         return $this->stmt;
     }
@@ -61,10 +61,10 @@ class Statement implements \Doctrine\DBAL\Driver\Statement
         );
     }
 
-    public function execute($params = null): \PolicyReporter\LazyBase\Doctrine\Result
+    public function execute($params = null): \Policyreporter\LazyBase\Doctrine\Result
     {
         $this->stmt->execute($params);
-        return new \PolicyReporter\LazyBase\Doctrine\Result($this->stmt);
+        return new \Policyreporter\LazyBase\Doctrine\Result($this->stmt);
     }
 
     private function convertParamType(int $type): int

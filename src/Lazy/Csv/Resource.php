@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PolicyReporter\LazyBase\Lazy\Csv;
 
-class Resource extends \PolicyReporter\LazyBase\Lazy\Csv
+class Resource extends \Policyreporter\LazyBase\Lazy\Csv
 {
     protected $fileHandle;
     protected $size;

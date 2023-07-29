@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PolicyReporter\LazyBase\Lazy\Csv;
 
-class LinewiseMessageStream extends \PolicyReporter\LazyBase\Lazy\Csv
+class LinewiseMessageStream extends \Policyreporter\LazyBase\Lazy\Csv
 {
     protected $stream;
 

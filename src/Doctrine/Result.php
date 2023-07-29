@@ -8,12 +8,12 @@ class Result implements \Doctrine\DBAL\Driver\Result
 {
     private $statement;
 
-    public function __construct(\PolicyReporter\LazyBase\Lazy\PDOStatement $statement)
+    public function __construct(\Policyreporter\LazyBase\Lazy\PDOStatement $statement)
     {
         $this->statement = $statement;
     }
 
-    public function statement(): \PolicyReporter\LazyBase\Lazy\PDOStatement
+    public function statement(): \Policyreporter\LazyBase\Lazy\PDOStatement
     {
         return $this->statement;
     }

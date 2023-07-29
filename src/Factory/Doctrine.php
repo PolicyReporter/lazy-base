@@ -9,14 +9,14 @@ require_once('lib/generalfunctions.php');
 abstract class Doctrine implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     protected function openHandle(
-        \PolicyReporter\LazyBase\PDO $handle,
+        \Policyreporter\LazyBase\PDO $handle,
         string $wrapperClass
-    ): \PolicyReporter\LazyBase\Doctrine {
+    ): \Policyreporter\LazyBase\Doctrine {
         return \Doctrine\DBAL\DriverManager::getConnection(
             [
                 'pdo' => $handle,
                 'wrapperClass' => $wrapperClass,
-                'driverClass' => \PolicyReporter\LazyBase\Doctrine\Driver::class,
+                'driverClass' => \Policyreporter\LazyBase\Doctrine\Driver::class,
             ]
         );
     }
