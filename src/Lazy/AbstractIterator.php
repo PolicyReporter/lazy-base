@@ -47,6 +47,7 @@ abstract class AbstractIterator implements \Iterator, \Countable
 
     private function safeJsonDecode($str)
     {
+        $str = (string)$str;
         // Empty string is not valid JSON
         // http://stackoverflow.com/questions/30621802/why-does-json-parse-fail-with-the-empty-string
         if ($str === '') {
