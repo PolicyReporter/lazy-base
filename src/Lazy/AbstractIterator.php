@@ -57,6 +57,10 @@ abstract class AbstractIterator implements \Iterator, \Countable
             return null;
         }
 
+        if (is_int($str)) {
+            return $str;
+        }
+
         $ret = \json_decode($str, true);
 
         // A return value of NULL can indicate a decode error, but it can also be a valid output
