@@ -47,14 +47,14 @@ abstract class AbstractIterator implements \Iterator, \Countable
 
     private function safeJsonDecode($str)
     {
-        $str = (string)$str;
+        $str = $str;
         // Empty string is not valid JSON
         // http://stackoverflow.com/questions/30621802/why-does-json-parse-fail-with-the-empty-string
         if ($str === '') {
             throw new \Exception('No input');
         }
 
-        if ($str === null || \strtolower($str) === 'null') {
+        if ($str === null || (is_string($str) && \strtolower($str) === 'null')) {
             return null;
         }
 
