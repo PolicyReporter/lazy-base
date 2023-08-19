@@ -5,9 +5,7 @@
 
 namespace Policyreporter\LazyBase\Factory;
 
-use Laminas\ServiceManager\Factory\FactoryInterface;
-
-abstract class PDO implements FactoryInterface
+class PDO implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     protected $databaseConnectionTrace;
 
@@ -27,7 +25,7 @@ abstract class PDO implements FactoryInterface
      *          handleName => The handle name to register with \DB (null if no registration)
      * @return PDO
      */
-    protected function openHandle(
+    public function openHandle(
         string $className,
         array $options,
     ): \Policyreporter\LazyBase\PDO {

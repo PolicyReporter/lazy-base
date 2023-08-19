@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Policyreporter\LazyBase\Lazy;
 
+require_once('KeyedGenerator/readCsv.php');
+
 /**
  * @see parent
  */

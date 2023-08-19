@@ -304,7 +304,7 @@ abstract class AbstractIterator implements \Iterator, \Countable
             }
             $this->currentResult = \array_combine($columnNames, $current);
             foreach ($this->transformations as $func) {
-                if (\argument_count($func) === 1) {
+                if ($this->argument_count($func) === 1) {
                     $this->currentResult = $func($this->currentResult);
                 } else {
                     [$this->currentResult, $this->index] = $func($this->currentResult, $this->index);
@@ -312,6 +312,16 @@ abstract class AbstractIterator implements \Iterator, \Countable
             }
         }
         return $this->currentResult;
+    }
+
+    private function argument_count(string|array|\Closure $callable): int
+    {
+        return call_user_func([
+            is_array($callable)
+                ? new \ReflectionMethod($callable[0], $callable[1])
+                : new \ReflectionFunction($callable),
+            'getNumberOfParameters'
+        ]);
     }
 
     /**

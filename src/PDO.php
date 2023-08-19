@@ -22,6 +22,8 @@ class PDO extends PDO\CompositionWrapper
     private $debugThreshold;
     private $debugBar;
 
+    private static $batchSize = 5000;
+
     protected function wrapStatement(\PDOStatement $statement): Lazy\AbstractIterator
     {
         return new Lazy\PDOStatement($statement);
@@ -551,7 +553,7 @@ class PDO extends PDO\CompositionWrapper
             return;
         }
 
-        $numParams = count(\first($data));
+        $numParams = count($data[0]);
 
         $inTransaction = $this->inTransaction();
         if (!$inTransaction) {
@@ -576,9 +578,14 @@ class PDO extends PDO\CompositionWrapper
         }
     }
 
-    protected static function getBatchSize()
+    public static function setBatchSize(int $batchSize): void
     {
-        return 5000;
+        self::$batchSize = $batchSize;
+    }
+
+    protected static function getBatchSize(): int
+    {
+        return self::$batchSize;
     }
 
     public static function buildEscapedColumnNameString(array $fields): string

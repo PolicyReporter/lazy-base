@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Policyreporter\LazyBase\Factory;
 
-require_once('lib/generalfunctions.php');
-
-abstract class Doctrine implements \Laminas\ServiceManager\Factory\FactoryInterface
+class Doctrine implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
-    protected function openHandle(
+    public function openHandle(
         \Policyreporter\LazyBase\PDO $handle,
         string $wrapperClass
     ): \Policyreporter\LazyBase\Doctrine {
@@ -20,4 +18,10 @@ abstract class Doctrine implements \Laminas\ServiceManager\Factory\FactoryInterf
             ]
         );
     }
+
+    public function __invoke(
+        \Interop\Container\ContainerInterface $container,
+        $requestedName,
+        ?array $options = null
+    ) { }
 }

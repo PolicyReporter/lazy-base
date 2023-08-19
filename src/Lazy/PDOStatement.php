@@ -2,7 +2,12 @@
 
 declare(strict_types=1);
 
+
 namespace Policyreporter\LazyBase\Lazy;
+
+require_once('../policyr/module/Exception/src/Exception/AbstractException.php');
+require_once('../policyr/module/Exception/src/Exception/System.php');
+require_once('../policyr/module/Exception/src/Exception/System/NoData.php');
 
 /**
  * This is an inner class for PDO only, do not use directly

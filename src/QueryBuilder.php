@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Policyreporter\LazyBase;
 
-abstract class QueryBuilder extends \Doctrine\DBAL\Query\QueryBuilder
+class QueryBuilder extends \Doctrine\DBAL\Query\QueryBuilder
 {
     public function execute(): Lazy\AbstractIterator
     {
