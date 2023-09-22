@@ -11,7 +11,7 @@ class KeyedGeneratorTest extends \Policyreporter\LazyBase\TestCase
 {
     public function test_iteration()
     {
-        $iterator = new KeyedGenerator(\readCsv(__DIR__ . '/KeyedGenerator/test_input.csv', \CSV_ASSOCIATIVE));
+        $iterator = new KeyedGenerator(KeyedGenerator\readCsv(__DIR__ . '/KeyedGenerator/test_input.csv', \CSV_ASSOCIATIVE));
         $this->assertEquals(
             [
                 [
