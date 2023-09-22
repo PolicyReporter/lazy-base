@@ -5,7 +5,7 @@
 
 namespace Policyreporter\LazyBase\Factory;
 
-class PDO implements \Laminas\ServiceManager\Factory\FactoryInterface
+abstract class PDO implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     protected $databaseConnectionTrace;
 
