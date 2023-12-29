@@ -2,9 +2,15 @@
 namespace Policyreporter\LazyBase\Lazy\KeyedGenerator;
 
 // A simple function to dump a CSV into a \Generator
-define('CSV_ASSOCIATIVE', 1);
-define('CSV_NUMERIC', 2);
-define('CSV_SKIP_FIRST', 3);
+if (!defined('CSV_ASSOCIATIVE')) {
+    define('CSV_ASSOCIATIVE', 1);
+}
+if (!defined('CSV_NUMERIC')) {
+    define('CSV_NUMERIC', 2);
+}
+if (!defined('CSV_SKIP_FIRST')) {
+    define('CSV_SKIP_FIRST', 3);
+}
 
 function readCsv($file, $mode, $newLine = false, $normalizeEol = false)
 {
