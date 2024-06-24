@@ -38,19 +38,19 @@ class PDO extends PDO\CompositionWrapper
     public function __construct(
         \PDO $handle,
         bool $isProduction = true,
-        int|bool $debugThreshold = false,
+        int | bool $debugThreshold = false,
         string $explainString = '',
         ?\DebugBar\DebugBar $debugBar = null,
-        bool $enableDebugBarEmulatedQuery = false,
-        bool $enableDebugBarExplain = false,
+        ?string $emulatedQueryRegisteredName = null,
+        ?string $explainQueryRegisteredName = null
     ) {
         parent::__construct($handle);
         $this->isProduction = $isProduction;
         $this->debugThreshold = $debugThreshold;
         $this->explainString = $explainString;
         $this->debugBar = $debugBar;
-        $this->enableDebugBarEmulatedQuery = $enableDebugBarEmulatedQuery;
-        $this->enableDebugBarExplain = $enableDebugBarExplain;
+        $this->emulatedQueryRegisteredName = $emulatedQueryRegisteredName;
+        $this->explainQueryRegisteredName = $explainQueryRegisteredName;
         // These options are required for this class to function properly
         // and would require careful consideration before modification, as such
         // we'll over-ride the values set on the pre-existing handle
@@ -180,13 +180,12 @@ class PDO extends PDO\CompositionWrapper
             throw $e;
         }
         // If false, skip all debugging, always
-        if (
-                $forceDebug
+        if ($forceDebug
             ||  $this->debugThreshold === 0
             || ($this->debugThreshold !== false && (microtime(true) - $startTime) > ($this->debugThreshold / 1000))
         ) {
-            if (!$this->isProduction && $this->debugBar !== null && $this->enableDebugBarEmulatedQuery) {
-                $this->debugBar['db_with_replacement']->addMessage(
+            if (!$this->isProduction && $this->debugBar !== null && $this->emulatedQueryRegisteredName !== null) {
+                $this->debugBar[$this->emulatedQueryRegisteredName]->addMessage(
                     $this->assembleEmulatedQuery($query, $parameters)
                 );
             }
@@ -204,13 +203,11 @@ class PDO extends PDO\CompositionWrapper
                     $analyzeOuput .= PHP_EOL . "Including {$sequenceScans} un-indexed Sequential Scans";
                 }
                 $matches = [];
-                if (
-                    preg_match_all(
-                        '/Index\s*(?:Only)?\s*Scan\s+using\s+([[:alnum:]_]+)\s+on\s+([[:alnum:]_]+)/',
-                        $analyzeOuput,
-                        $matches
-                    )
-                ) {
+                if (preg_match_all(
+                    '/Index\s*(?:Only)?\s*Scan\s+using\s+([[:alnum:]_]+)\s+on\s+([[:alnum:]_]+)/',
+                    $analyzeOuput,
+                    $matches
+                )) {
                     $matchesStrings = ['Indexes used:'];
                     for ($i = 0; $i < count($matches[0]); $i++) {
                         $matchesStrings[] = "{$matches[2][$i]} ( \"{$matches[1][$i]}\" )";
@@ -218,8 +215,8 @@ class PDO extends PDO\CompositionWrapper
                     $analyzeOuput .= PHP_EOL . implode(PHP_EOL . "\t", $matchesStrings);
                 }
 
-                if (!$this->isProduction && $this->debugBar !== null && $this->enableDebugBarExplain) {
-                    $this->debugBar['db_explain']->addMessage($analyzeOuput);
+                if (!$this->isProduction && $this->debugBar !== null && $this->explainQueryRegisteredName !== null) {
+                    $this->debugBar[$this->explainQueryRegisteredName]->addMessage($analyzeOuput);
                 }
                 // Pretty arbitrarily chosen format that is easy to read, this formatting should
                 // not be programmatically relied upon

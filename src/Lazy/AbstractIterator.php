@@ -141,7 +141,7 @@ abstract class AbstractIterator implements \Iterator, \Countable
      * @param mixed[]|Traversable $a The list of interest
      * @return mixed The last value of that list
      */
-    function last($a)
+    private function last($a)
     {
         if (is_array($a)) {
             if (count($a)) {
@@ -304,7 +304,7 @@ abstract class AbstractIterator implements \Iterator, \Countable
             }
             $this->currentResult = \array_combine($columnNames, $current);
             foreach ($this->transformations as $func) {
-                if ($this->argument_count($func) === 1) {
+                if ($this->argumentCount($func) === 1) {
                     $this->currentResult = $func($this->currentResult);
                 } else {
                     [$this->currentResult, $this->index] = $func($this->currentResult, $this->index);
@@ -314,7 +314,7 @@ abstract class AbstractIterator implements \Iterator, \Countable
         return $this->currentResult;
     }
 
-    private function argument_count(string|array|\Closure $callable): int
+    private function argumentCount(string | array | \Closure $callable): int
     {
         return call_user_func([
             is_array($callable)

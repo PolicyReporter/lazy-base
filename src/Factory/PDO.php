@@ -60,8 +60,8 @@ abstract class PDO implements \Laminas\ServiceManager\Factory\FactoryInterface
             $options['debugThreshold'] ?? false,
             $options['explainString'] ?? '',
             $options['debugBar'] ?? null,
-            $options['enableDebugBarEmulatedQuery'] ?? false,
-            $options['enableDebugBarExplain'] ?? false,
+            $options['emulatedQueryRegisteredName'] ?? null,
+            $options['explainQueryRegisteredName'] ?? null,
         );
     }
 

@@ -12,14 +12,14 @@ require_once('test/Doctrine.php');
  */
 class QueryBuilderLargeTest extends \Policyreporter\LazyBase\TestCase
 {
-    static $queryBuilder = null;
+    private static $queryBuilder = null;
 
     public function setUp(): void
     {
         parent::setUp();
         if (self::$queryBuilder === null) {
             self::$queryBuilder = new \Policyreporter\LazyBase\QueryBuilder(
-                (new \Policyreporter\LazyBase\Factory\Doctrine)->openHandle(
+                (new \Policyreporter\LazyBase\Factory\Doctrine())->openHandle(
                     $this->dbHandle(),
                     \Policyreporter\LazyBase\test\Doctrine::class
                 )
@@ -140,16 +140,28 @@ class QueryBuilderLargeTest extends \Policyreporter\LazyBase\TestCase
         $queryBuilder = self::$queryBuilder;
 
         $result = $queryBuilder->select(
-                'l.name AS lname',
-                'a.name AS aname',
-                'b.name AS bname'
-            )
-            ->from('lazybase', 'l')
-            ->join('l', 'lazybasea', 'a', 'l.id = a.id')
-            ->leftJoin('l', 'lazybaseb', 'b', 'l.id = b.id')
-            ->where('l.id = :id')
-            ->setParameter('id', $id)
-            ->execute();
+            'l.name AS lname',
+            'a.name AS aname',
+            'b.name AS bname'
+        )->from(
+            'lazybase',
+            'l'
+        )->join(
+            'l',
+            'lazybasea',
+            'a',
+            'l.id = a.id'
+        )->leftJoin(
+            'l',
+            'lazybaseb',
+            'b',
+            'l.id = b.id'
+        )->where(
+            'l.id = :id'
+        )->setParameter(
+            'id',
+            $id
+        )->execute();
 
         $this->assertEquals(
             [

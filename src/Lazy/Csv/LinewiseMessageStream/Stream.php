@@ -47,55 +47,55 @@ class Stream implements \Psr\Http\Message\StreamInterface
     {
         return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
     }
-    public function close()
+    public function close(): void
     {
-        return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
+        call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
     }
     public function detach()
     {
         return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
     }
-    public function getSize()
+    public function getSize(): ?int
     {
         return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
     }
-    public function tell()
+    public function tell(): int
     {
         return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
     }
-    public function eof()
+    public function eof(): bool
     {
         return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
     }
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
     }
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET): void
+    {
+        call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
+    }
+    public function rewind(): void
+    {
+        call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
+    }
+    public function isWritable(): bool
     {
         return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
     }
-    public function rewind()
+    public function write($string): int
     {
         return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
     }
-    public function isWritable()
+    public function isReadable(): bool
     {
         return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
     }
-    public function write($string)
+    public function read($length): string
     {
         return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
     }
-    public function isReadable()
-    {
-        return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
-    }
-    public function read($length)
-    {
-        return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
-    }
-    public function getContents()
+    public function getContents(): string
     {
         return call_user_func_array([$this->stream, __FUNCTION__], func_get_args());
     }

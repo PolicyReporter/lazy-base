@@ -14,14 +14,14 @@ require_once('test/Doctrine.php');
  */
 class DoctrineLargeTest extends \Policyreporter\LazyBase\TestCase
 {
-    static $queryBuilder = null;
+    private static $queryBuilder = null;
 
     public function setUp(): void
     {
         parent::setUp();
         if (self::$queryBuilder === null) {
             self::$queryBuilder = new \Policyreporter\LazyBase\QueryBuilder(
-                (new \Policyreporter\LazyBase\Factory\Doctrine)->openHandle(
+                (new \Policyreporter\LazyBase\Factory\Doctrine())->openHandle(
                     $this->dbHandle(),
                     \Policyreporter\LazyBase\test\Doctrine::class
                 )

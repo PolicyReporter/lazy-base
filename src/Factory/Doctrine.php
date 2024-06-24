@@ -23,5 +23,6 @@ class Doctrine implements \Laminas\ServiceManager\Factory\FactoryInterface
         \Interop\Container\ContainerInterface $container,
         $requestedName,
         ?array $options = null
-    ) { }
+    ) {
+    }
 }

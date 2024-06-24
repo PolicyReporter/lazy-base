@@ -11,12 +11,12 @@ class DatabaseConnectionTrace
     protected float $startTime;
     protected float $endTime;
     protected string $handleName;
-    protected string|array $logger;
+    protected string | array $logger;
 
     public function __construct(
         \PDO $pdo,
         // Callable
-        string|array $logger,
+        string | array $logger,
         string $handleName,
         float $microTime = null
     ) {

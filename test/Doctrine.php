@@ -7,4 +7,5 @@ namespace Policyreporter\LazyBase\test;
 require_once('src/Doctrine.php');
 
 class Doctrine extends \PolicyReporter\LazyBase\Doctrine
-{ }
+{
+}

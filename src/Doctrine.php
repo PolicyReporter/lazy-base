@@ -83,8 +83,7 @@ abstract class Doctrine extends \Doctrine\DBAL\Connection
         }
 
         foreach ($types as $type) {
-            if (
-                $type === self::PARAM_INT_ARRAY
+            if ($type === self::PARAM_INT_ARRAY
                 || $type === self::PARAM_STR_ARRAY
                 || $type === self::PARAM_ASCII_STR_ARRAY
             ) {
@@ -112,8 +111,11 @@ abstract class Doctrine extends \Doctrine\DBAL\Connection
         ];
     }
 
-    protected function bindTypedValues(\Policyreporter\LazyBase\Doctrine\Statement $stmt, array $params, array $types): void
-    {
+    protected function bindTypedValues(
+        \Policyreporter\LazyBase\Doctrine\Statement $stmt,
+        array $params,
+        array $types
+    ): void {
         // Check whether parameters are positional or named. Mixing is not allowed.
         if (is_int(key($params))) {
             $bindIndex = 1;
