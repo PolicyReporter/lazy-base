@@ -15,5 +15,7 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {}
+    "require": {
+        "policyreporter/exception": "v0.0.2"
+    }
 }

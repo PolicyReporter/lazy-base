@@ -1,0 +1,55 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "afcd094a8560bebf6b6721832478a799",
+    "packages": [
+        {
+            "name": "policyreporter/exception",
+            "version": "v0.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PolicyReporter/exception.git",
+                "reference": "6ed59266a75f0d78ef9490dbd6d551ce7abf586f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PolicyReporter/exception/zipball/6ed59266a75f0d78ef9490dbd6d551ce7abf586f",
+                "reference": "6ed59266a75f0d78ef9490dbd6d551ce7abf586f",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Policyreporter\\Exception\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "alex-munkelwitz-pr",
+                    "email": "alex@policyreporter.com"
+                }
+            ],
+            "description": "A class based exception framework for PHP",
+            "support": {
+                "source": "https://github.com/PolicyReporter/exception/tree/v0.0.2"
+            },
+            "time": "2024-09-25T17:16:43+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.1.0"
+}

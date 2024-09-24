@@ -5,10 +5,6 @@ declare(strict_types=1);
 
 namespace Policyreporter\LazyBase\Lazy;
 
-require_once('../policyr/module/Exception/src/Exception/AbstractException.php');
-require_once('../policyr/module/Exception/src/Exception/System.php');
-require_once('../policyr/module/Exception/src/Exception/System/NoData.php');
-
 /**
  * This is an inner class for PDO only, do not use directly
  *
@@ -72,13 +68,13 @@ class PDOStatement extends AbstractIterator
     /**
      * Return the next result row from our query iterator, if possible
      *
-     * @throws \Exception If no data remains to be viewed
+     * @throws \Policyreporter\Exception\System\NoData If no data remains to be viewed
      * @return mixed[] The next raw result row
      */
     protected function fetchCurrent(): array
     {
         if (false === ($nextRow = $this->statement->fetch(\PDO::FETCH_NUM, \PDO::FETCH_ORI_NEXT))) {
-            throw new \Exception\System\NoData('No valid data remains');
+            throw new \Policyreporter\Exception\System\NoData('No valid data remains');
         }
         return $nextRow;
     }
@@ -86,12 +82,12 @@ class PDOStatement extends AbstractIterator
     /**
      * Throws an exception if not called while sitting on element 0
      *
-     * @throws System\Exception this class of iterator cannot be rewound
+     * @throws \Policyreporter\System\Exception this class of iterator cannot be rewound
      */
     public function rewind(): void
     {
         if ($this->index !== 0) {
-            throw new \Exception\System('Unable to rewind read-once iterator');
+            throw new \Policyreporter\Exception\System('Unable to rewind read-once iterator');
         }
     }
 
