@@ -11,13 +11,13 @@ require_once('KeyedGenerator/readCsv.php');
  */
 class KeyedGenerator extends AbstractWrappingIterator
 {
-    protected $generator;
     protected $headerRow = null;
     protected $rawColumnNames = [];
 
-    public function __construct(\Generator $generator)
+    public function __construct(
+        protected \Generator $generator,
+    )
     {
-        $this->generator = $generator;
     }
 
     public function iterator(): \Iterator

@@ -6,12 +6,12 @@ namespace Policyreporter\LazyBase\Lazy\Csv;
 
 class Resource extends \Policyreporter\LazyBase\Lazy\Csv
 {
-    protected $fileHandle;
     protected $size;
 
-    public function __construct($fileHandle)
+    public function __construct(
+        protected $fileHandle,
+    )
     {
-        $this->fileHandle = $fileHandle;
         $this->size = fstat($this->fileHandle)['size'];
     }
 
@@ -22,7 +22,7 @@ class Resource extends \Policyreporter\LazyBase\Lazy\Csv
 
     public function valid(): bool
     {
-        return !(\feof($this->fileHandle) || (\ftell($this->fileHandle) === $this->size));
+        return !(\feof($this->fileHandle) or (\ftell($this->fileHandle) === $this->size));
     }
 
     public function rewind(): void

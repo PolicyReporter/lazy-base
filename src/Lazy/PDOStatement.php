@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Policyreporter\LazyBase\Lazy;
 
 require_once('../policyr/module/Exception/src/Exception/AbstractException.php');
@@ -25,15 +24,14 @@ class PDOStatement extends AbstractIterator
 {
     use \Policyreporter\LazyBase\Deprecated;
 
-    protected $statement;
-
     /**
      * Standard PDOStatement constructor wrapper to capture
      * the live database handle
      */
-    public function __construct($statement)
+    public function __construct(
+        protected \PDOStatement | self $statement,
+    )
     {
-        $this->statement = $statement;
     }
 
     /**

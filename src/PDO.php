@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Policyreporter\LazyBase;
 
 use Policyreporter\LazyBase\Lazy;
@@ -19,8 +21,6 @@ use Exception;
 class PDO extends PDO\CompositionWrapper
 {
     private $wasInTransaction = false;
-    private $debugThreshold;
-    private $debugBar;
 
     private static $batchSize = 5000;
 
@@ -37,20 +37,15 @@ class PDO extends PDO\CompositionWrapper
      */
     public function __construct(
         \PDO $handle,
-        bool $isProduction = true,
-        int | bool $debugThreshold = false,
-        string $explainString = '',
-        ?\DebugBar\DebugBar $debugBar = null,
-        ?string $emulatedQueryRegisteredName = null,
-        ?string $explainQueryRegisteredName = null
-    ) {
+        protected bool $isProduction = true,
+        protected int | bool $debugThreshold = false,
+        protected string $explainString = '',
+        protected ?\DebugBar\DebugBar $debugBar = null,
+        protected ?string $emulatedQueryRegisteredName = null,
+        protected ?string $explainQueryRegisteredName = null
+    )
+    {
         parent::__construct($handle);
-        $this->isProduction = $isProduction;
-        $this->debugThreshold = $debugThreshold;
-        $this->explainString = $explainString;
-        $this->debugBar = $debugBar;
-        $this->emulatedQueryRegisteredName = $emulatedQueryRegisteredName;
-        $this->explainQueryRegisteredName = $explainQueryRegisteredName;
         // These options are required for this class to function properly
         // and would require careful consideration before modification, as such
         // we'll over-ride the values set on the pre-existing handle
@@ -72,12 +67,19 @@ class PDO extends PDO\CompositionWrapper
      * params as per the parent function
      * @return Lazy\PDOStatement The wrapped result handle
      */
-    public function prepare($statement, $options = null)
+    public function prepare(
+        string $statement,
+        $options = null,
+    )
     {
         return $this->wrapStatement($this->redirectToHandle(__FUNCTION__, ...func_get_args()));
     }
 
-    public function query(string $query, ?int $fetchMode = null, ...$fetchModeArgs)
+    public function query(
+        string $query,
+        ?int $fetchMode = null,
+        ...$fetchModeArgs,
+    )
     {
         return $this->wrapStatement($this->redirectToHandle(__FUNCTION__, ...func_get_args()));
     }
@@ -107,7 +109,10 @@ class PDO extends PDO\CompositionWrapper
      * @param mixed[]   $parameters An array of parameters required by that query
      * @return Lazy\PDOStatement      The result described by the query and parameters
      */
-    public function run($query, $parameters = null)
+    public function run(
+        string $query,
+        ?iterable $parameters = null,
+    ): Lazy\AbstractIterator
     {
         return call_user_func([$this, 'internalRun'], $query, $parameters);
     }
@@ -126,7 +131,10 @@ class PDO extends PDO\CompositionWrapper
      * @param mixed[]   $parameters An array of parameters required by that query
      * @return Lazy\PDOStatement      The result described by the query and parameters
      */
-    public function debug($query, $parameters = null)
+    public function debug(
+        string $query,
+        ?iterable $parameters = null
+    ): Lazy\AbstractIterator
     {
         if ($this->isProduction) {
             try {
@@ -146,7 +154,11 @@ class PDO extends PDO\CompositionWrapper
      * @see self::run( )
      * @param bool $forceDebug Force the debugging of this query, even if no debugThreshold is set
      */
-    private function internalRun($query, $parameters = null, $forceDebug = false)
+    private function internalRun(
+        string $query,
+        ?iterable $parameters = null,
+        bool $forceDebug = false,
+    ): Lazy\AbstractIterator
     {
         $prepareArguments = [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY];
         $extraneousParameters = [];
@@ -163,7 +175,7 @@ class PDO extends PDO\CompositionWrapper
             $stmt->bindParams($parameters);
         }
         $this->wasInTransaction = $this->inTransaction();
-        if ($this->debugThreshold) { // 0 (all queries) || false (no queries)
+        if ($this->debugThreshold) { // 0 (all queries) or false (no queries)
             $startTime = microtime(true);
         } else {
             $startTime = 0;
@@ -180,11 +192,12 @@ class PDO extends PDO\CompositionWrapper
             throw $e;
         }
         // If false, skip all debugging, always
-        if ($forceDebug
-            ||  $this->debugThreshold === 0
-            || ($this->debugThreshold !== false && (microtime(true) - $startTime) > ($this->debugThreshold / 1000))
+        if (
+                $forceDebug
+            or $this->debugThreshold === 0
+            or ($this->debugThreshold !== false and (microtime(true) - $startTime) > ($this->debugThreshold / 1000))
         ) {
-            if (!$this->isProduction && $this->debugBar !== null && $this->emulatedQueryRegisteredName !== null) {
+            if (!$this->isProduction and $this->debugBar !== null and $this->emulatedQueryRegisteredName !== null) {
                 $this->debugBar[$this->emulatedQueryRegisteredName]->addMessage(
                     $this->assembleEmulatedQuery($query, $parameters)
                 );
@@ -203,11 +216,13 @@ class PDO extends PDO\CompositionWrapper
                     $analyzeOuput .= PHP_EOL . "Including {$sequenceScans} un-indexed Sequential Scans";
                 }
                 $matches = [];
-                if (preg_match_all(
-                    '/Index\s*(?:Only)?\s*Scan\s+using\s+([[:alnum:]_]+)\s+on\s+([[:alnum:]_]+)/',
-                    $analyzeOuput,
-                    $matches
-                )) {
+                if (
+                    preg_match_all(
+                        '/Index\s*(?:Only)?\s*Scan\s+using\s+([[:alnum:]_]+)\s+on\s+([[:alnum:]_]+)/',
+                        $analyzeOuput,
+                        $matches,
+                    )
+                ) {
                     $matchesStrings = ['Indexes used:'];
                     for ($i = 0; $i < count($matches[0]); $i++) {
                         $matchesStrings[] = "{$matches[2][$i]} ( \"{$matches[1][$i]}\" )";
@@ -215,7 +230,11 @@ class PDO extends PDO\CompositionWrapper
                     $analyzeOuput .= PHP_EOL . implode(PHP_EOL . "\t", $matchesStrings);
                 }
 
-                if (!$this->isProduction && $this->debugBar !== null && $this->explainQueryRegisteredName !== null) {
+                if (
+                        !$this->isProduction
+                    and $this->debugBar !== null
+                    and $this->explainQueryRegisteredName !== null
+                ) {
                     $this->debugBar[$this->explainQueryRegisteredName]->addMessage($analyzeOuput);
                 }
                 // Pretty arbitrarily chosen format that is easy to read, this formatting should
@@ -240,7 +259,7 @@ class PDO extends PDO\CompositionWrapper
      *
      * @return callable A function to quote things
      */
-    public function quoter()
+    public function quoter(): callable
     {
         $handle = $this->handle;
         return function ($v) use ($handle) {
@@ -262,7 +281,7 @@ class PDO extends PDO\CompositionWrapper
      *
      * @throws \PDOException if the commit cannot be properly fulfilled.
      */
-    public function forceTransactionCheck()
+    public function forceTransactionCheck(): void
     {
         $this->run('SET CONSTRAINTS ALL IMMEDIATE');
         $this->run('SET CONSTRAINTS ALL DEFERRED');
@@ -283,7 +302,10 @@ class PDO extends PDO\CompositionWrapper
      *
      * @return string The assembled emulated query
      */
-    public function assembleEmulatedQuery($query, array $parameters = null)
+    public function assembleEmulatedQuery(
+        string $query,
+        ?iterable $parameters = null,
+    ): string
     {
         if ($this->isProduction) {
             try {
@@ -318,7 +340,10 @@ class PDO extends PDO\CompositionWrapper
      *      The new parameter list
      *      Any parameters that we didn't find replacements for
      */
-    private static function explodeParams(string $query, array $parameters)
+    private static function explodeParams(
+        string $query,
+        ?iterable $parameters,
+    ): array
     {
         $newParameters = $replacementList = $extraneousParameters = [];
         foreach ($parameters as $name => $value) {
@@ -362,12 +387,14 @@ class PDO extends PDO\CompositionWrapper
      * @return bool(true) Whether the rollBack was successful, according to PDO::rollBack
      *         which should always be true @see http://php.net/manual/en/pdo.rollback.php
      */
-    public function rollBack(\Throwable $e = null)
+    public function rollBack(
+        \Throwable $e = null,
+    ): bool
     {
         $rolledBack = false;
         if ($this->inTransaction()) {
             $rolledBack = $this->handle->rollBack();
-            if ($e !== null && $e instanceof \Throwable) {
+            if ($e !== null and $e instanceof \Throwable) {
                 // Yay the rollBack worked, but we still have a pending exception to throw
                 throw $e;
             }
@@ -401,7 +428,9 @@ class PDO extends PDO\CompositionWrapper
      *
      * @return string[] The replacement token followed by the variable name
      */
-    private static function varNameAndToken($name): array
+    private static function varNameAndToken(
+        string | int $name,
+    ): array
     {
         switch (gettype($name)) {
             case 'string':
@@ -426,7 +455,9 @@ class PDO extends PDO\CompositionWrapper
      *
      * @throws Exception if keys are not ints or not natural
      */
-    public static function insertClauseForData($data)
+    public static function insertClauseForData(
+        iterable $data
+    ): string
     {
         if (!is_array($data)) {
             throw new Exception("insertClauseForData expects data to be an array");
@@ -457,7 +488,10 @@ class PDO extends PDO\CompositionWrapper
      * @param string[] $fields An array of field names
      * @return string The where clause corresponding to that data
      */
-    public static function whereClauseForData($data, $fields)
+    public static function whereClauseForData(
+        array $data,
+        array $fields,
+    ): string
     {
         // Double-quote field names (possibly including table names)
         $numFields = sizeof($fields);
@@ -488,7 +522,10 @@ class PDO extends PDO\CompositionWrapper
         return "ROW($fields) IN (\n$clauses\n)";
     }
 
-    public static function whereClause(array $atoms, string $baseIndentation = ''): string
+    public static function whereClause(
+        array $atoms,
+        string $baseIndentation = '',
+    ): string
     {
         $atoms = array_filter($atoms);
         if (empty($atoms)) {
@@ -501,7 +538,10 @@ class PDO extends PDO\CompositionWrapper
         }
     }
 
-    public static function havingClause(array $atoms, string $baseIndentation = ''): string
+    public static function havingClause(
+        array $atoms,
+        string $baseIndentation = '',
+    ): string
     {
         $atoms = array_filter($atoms);
         if (empty($atoms)) {
@@ -522,7 +562,9 @@ class PDO extends PDO\CompositionWrapper
      * @param mixed[] A list of scalar values titled by the fields they correspond to
      * @return [string, mixed[]] A query fragment and an array of values configured to fix that query fragment
      */
-    public static function setClause(array $atoms): array
+    public static function setClause(
+        array $atoms,
+    ): array
     {
         if (!count($atoms)) {
             throw new \Exception("The atom list must not be empty.");
@@ -543,7 +585,11 @@ class PDO extends PDO\CompositionWrapper
      * @param array $data An array of the form [[col1data, col2data], [col1data, col2data], ...]
      *
      */
-    public function runInsertInBatches(string $queryBeforeValues, array $data, string $queryAfterValues = ''): void
+    public function runInsertInBatches(
+        string $queryBeforeValues,
+        array $data,
+        string $queryAfterValues = '',
+    ): void
     {
         if (!count($data)) {
             // Nothing to do, we're done.
@@ -557,7 +603,7 @@ class PDO extends PDO\CompositionWrapper
             $this->beginTransaction();
         }
         try {
-            $batchSize = max(1, floor(self::getBatchSize() / $numParams));
+            $batchSize = (int)max(1, floor(self::getBatchSize() / $numParams));
             for ($i = 0; ([] !== ($batch = array_slice($data, $batchSize * $i, $batchSize))); $i++) {
                 $this->run($queryBeforeValues . ' ' . self::insertClauseForData($batch) .
                                 ' ' . $queryAfterValues, $batch);
@@ -575,7 +621,9 @@ class PDO extends PDO\CompositionWrapper
         }
     }
 
-    public static function setBatchSize(int $batchSize): void
+    public static function setBatchSize(
+        int $batchSize,
+    ): void
     {
         self::$batchSize = $batchSize;
     }
@@ -585,7 +633,9 @@ class PDO extends PDO\CompositionWrapper
         return self::$batchSize;
     }
 
-    public static function buildEscapedColumnNameString(array $fields): string
+    public static function buildEscapedColumnNameString(
+        array $fields,
+    ): string
     {
         if (\mb_strpos(implode('', $fields), '"') !== false) {
             throw new \Exception('Database column names cannot include the " character.');

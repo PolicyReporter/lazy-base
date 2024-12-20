@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Policyreporter\LazyBase\Lazy\Csv;
 
 require_once('test/TestCase.php');

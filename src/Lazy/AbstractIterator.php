@@ -53,7 +53,7 @@ abstract class AbstractIterator implements \Iterator, \Countable
             throw new \Exception('No input');
         }
 
-        if ($str === null || (is_string($str) && \strtolower($str) === 'null')) {
+        if ($str === null or (is_string($str) and \strtolower($str) === 'null')) {
             return null;
         }
 
@@ -64,7 +64,7 @@ abstract class AbstractIterator implements \Iterator, \Countable
         $ret = \json_decode($str, true);
 
         // A return value of NULL can indicate a decode error, but it can also be a valid output
-        if ($ret === null && \json_last_error() !== JSON_ERROR_NONE) {
+        if ($ret === null and \json_last_error() !== JSON_ERROR_NONE) {
             throw new \Exception(\json_last_error_msg());
         }
         return $ret;
@@ -119,7 +119,7 @@ abstract class AbstractIterator implements \Iterator, \Countable
      */
     private function first($a)
     {
-        if (is_array($a) || $a instanceof \Traversable) {
+        if (is_array($a) or $a instanceof \Traversable) {
             foreach ($a as $b) {
                 return $b;
             }

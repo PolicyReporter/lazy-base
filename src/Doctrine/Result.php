@@ -6,11 +6,10 @@ namespace Policyreporter\LazyBase\Doctrine;
 
 class Result implements \Doctrine\DBAL\Driver\Result
 {
-    private $statement;
-
-    public function __construct(\Policyreporter\LazyBase\Lazy\PDOStatement $statement)
+    public function __construct(
+        protected \Policyreporter\LazyBase\Lazy\PDOStatement $statement,
+    )
     {
-        $this->statement = $statement;
     }
 
     public function statement(): \Policyreporter\LazyBase\Lazy\PDOStatement

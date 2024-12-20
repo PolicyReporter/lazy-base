@@ -8,7 +8,7 @@ use Doctrine\DBAL\ParameterType;
 
 class Statement implements \Doctrine\DBAL\Driver\Statement
 {
-    private const PARAM_TYPE_MAP = [
+    protected const PARAM_TYPE_MAP = [
         ParameterType::NULL => \PDO::PARAM_NULL,
         ParameterType::INTEGER => \PDO::PARAM_INT,
         ParameterType::STRING => \PDO::PARAM_STR,
@@ -17,10 +17,11 @@ class Statement implements \Doctrine\DBAL\Driver\Statement
         ParameterType::LARGE_OBJECT => \PDO::PARAM_LOB,
         ParameterType::BOOLEAN => \PDO::PARAM_BOOL,
     ];
-    private $stmt;
-    public function __construct(\Policyreporter\LazyBase\Lazy\PDOStatement $stmt)
+
+    public function __construct(
+        protected \Policyreporter\LazyBase\Lazy\PDOStatement $stmt,
+    )
     {
-        $this->stmt = $stmt;
     }
 
     public function statement(): \Policyreporter\LazyBase\Lazy\PDOStatement
@@ -41,7 +42,8 @@ class Statement implements \Doctrine\DBAL\Driver\Statement
         $type = ParameterType::STRING,
         $length = null,
         $driverOptions = null
-    ): bool {
+    ): bool
+    {
         if (func_num_args() > 4) {
             \Doctrine\Deprecations\Deprecation::triggerIfCalledFromOutside(
                 'doctrine/dbal',

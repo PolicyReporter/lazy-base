@@ -6,11 +6,10 @@ namespace Policyreporter\LazyBase\Lazy\Csv\LinewiseMessageStream;
 
 class Stream implements \Psr\Http\Message\StreamInterface
 {
-    private $stream;
-
-    public function __construct(\Psr\Http\Message\StreamInterface $stream)
+    public function __construct(
+        protected \Psr\Http\Message\StreamInterface $stream,
+    )
     {
-        $this->stream = $stream;
     }
 
     public function readLine(int $maxLength = null): string
@@ -34,7 +33,7 @@ class Stream implements \Psr\Http\Message\StreamInterface
             }
             $buffer .= $byte;
             // Break when a new line is found or the max length - 1 is reached
-            if ($byte === "\n" || ++$size === $maxLength - 1) {
+            if ($byte === "\n" or ++$size === $maxLength - 1) {
                 break;
             }
         }

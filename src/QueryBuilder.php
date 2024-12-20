@@ -18,7 +18,8 @@ class QueryBuilder extends \Doctrine\DBAL\Query\QueryBuilder
     public function run(
         array $parameters = [],
         array $parameterTypes = []
-    ): Lazy\AbstractIterator {
+    ): Lazy\AbstractIterator
+    {
         return $this->getConnection()->executeWrappedQuery(
             $this->getSQL(),
             array_merge($this->getParameters(), $parameters),

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Policyreporter\LazyBase;
 
 require_once('test/Constraint/Throws.php');

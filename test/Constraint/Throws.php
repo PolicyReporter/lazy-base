@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Policyreporter\LazyBase\Constraint;
 
 class Throws extends \PHPUnit\Framework\Constraint\Constraint
@@ -20,7 +22,7 @@ class Throws extends \PHPUnit\Framework\Constraint\Constraint
         }
         [$callback, $args, $err, $errorRegex] = $other;
 
-        if (!class_exists($this->value) && !interface_exists($this->value)) {
+        if (!class_exists($this->value) and !interface_exists($this->value)) {
             throw new \Exception("Class/interface '{$this->value}' does not exist.");
         }
 

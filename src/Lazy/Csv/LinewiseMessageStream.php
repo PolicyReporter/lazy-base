@@ -6,11 +6,10 @@ namespace Policyreporter\LazyBase\Lazy\Csv;
 
 class LinewiseMessageStream extends \Policyreporter\LazyBase\Lazy\Csv
 {
-    protected $stream;
-
-    public function __construct($stream)
+    public function __construct(
+        protected $stream
+    )
     {
-        $this->stream = $stream;
     }
 
     protected function readLine(): array

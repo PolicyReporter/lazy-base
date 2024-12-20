@@ -6,12 +6,11 @@ namespace Policyreporter\LazyBase\Doctrine;
 
 class Connection implements \Doctrine\DBAL\Driver\ServerInfoAwareConnection
 {
-    private $connection;
-
-    public function __construct(\PDO $connection)
+    public function __construct(
+        protected \PDO $connection,
+    )
     {
         $connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        $this->connection = $connection;
     }
 
     public function exec(string $sql): int
@@ -100,7 +99,8 @@ class Connection implements \Doctrine\DBAL\Driver\ServerInfoAwareConnection
         array $params = [],
         $types = [],
         ?\Doctrine\DBAL\Cache\QueryCacheProfile $qcp = null
-    ): \Policyreporter\LazyBase\Doctrine\Result {
+    ): \Policyreporter\LazyBase\Doctrine\Result
+    {
         if ($qcp !== null) {
             return $this->executeCacheQuery($sql, $params, $types, $qcp);
         }

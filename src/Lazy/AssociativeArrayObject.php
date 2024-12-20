@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Policyreporter\LazyBase\Lazy;
 
 class AssociativeArrayObject extends ArrayObject

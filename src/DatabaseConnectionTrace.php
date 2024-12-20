@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Policyreporter\LazyBase;
 
 class DatabaseConnectionTrace
@@ -7,22 +9,19 @@ class DatabaseConnectionTrace
     public const CONNECTION_TYPE__READ_ONLY = "ReadOnly";
     public const CONNECTION_TYPE__READ_WRITE = "ReadWrite";
 
-    protected \PDO $pdo;
     protected float $startTime;
-    protected float $endTime;
-    protected string $handleName;
     protected string | array $logger;
+    protected ?float $endTime = null;
 
     public function __construct(
-        \PDO $pdo,
+        protected \PDO $pdo,
         // Callable
-        string | array $logger,
-        string $handleName,
-        float $microTime = null
-    ) {
-        $this->pdo = $pdo;
+        callable $logger,
+        protected string $handleName,
+        ?float $microTime = null,
+    )
+    {
         $this->logger = $logger;
-        $this->handleName = $handleName;
         $this->startTime = $microTime ? $microTime : microtime(true);
     }
 

@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="PHP_CodeSniffer" xsi:noNamespaceSchemaLocation="phpcs.xsd">
+    <description>The coding standard for PHP_CodeSniffer itself.</description>
+
+    <file>.</file>
+
+    <arg name="extensions" value="php,class"/>
+
+    <!-- Don't lint our vendor file, that is not code we should modify -->
+    <exclude-pattern>vendor</exclude-pattern>
+
+    <rule ref="PSR12">
+        <exclude name="PSR12.Classes.ClassInstantiation.MissingParentheses" />
+    </rule>
+    <!-- Disallow array() syntax -->
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax" />
+    <!-- Enforce strict type #7322 -->
+    <rule ref="Generic.PHP.RequireStrictTypes">
+        <exclude-pattern>src/Factory/PDO.php</exclude-pattern>
+    </rule>
+
+    <rule ref="Squiz.Functions.MultiLineFunctionDeclaration">
+        <exclude name="Squiz.Functions.MultiLineFunctionDeclaration.NewlineBeforeOpenBrace" />
+    </rule>
+
+    <!--
+        We often include non-namespaced files.
+        This is not modern practice, but it is a large change to fix.
+    -->
+    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+        <severity>0</severity>
+    </rule>
+
+    <!--
+        Underscores are used in function names across policyr test codebase,
+        changing that would require large amounts of refactoring. This linter rule can be re-enabled
+        if that refactoring is ever completed.
+    -->
+    <rule ref="PSR1.Methods.CamelCapsMethodName">
+        <exclude-pattern>test/</exclude-pattern>
+        <exclude-pattern>tests/</exclude-pattern>
+    </rule>
+
+    <!--
+        Suppress line length for files that are dealing with large sets of text, complex SQL that loses redability,
+        tests,
+    -->
+    <rule ref="Generic.Files.LineLength">
+        <!-- Suppress tests -->
+        <exclude-pattern>test/</exclude-pattern>
+        <exclude-pattern>tests/</exclude-pattern>
+    </rule>
+
+    <rule ref="Generic.Functions.OpeningFunctionBraceBsdAllman" />
+</ruleset>

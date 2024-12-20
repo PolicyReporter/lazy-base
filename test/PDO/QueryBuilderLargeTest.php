@@ -19,7 +19,7 @@ class QueryBuilderLargeTest extends \Policyreporter\LazyBase\TestCase
         parent::setUp();
         if (self::$queryBuilder === null) {
             self::$queryBuilder = new \Policyreporter\LazyBase\QueryBuilder(
-                (new \Policyreporter\LazyBase\Factory\Doctrine())->openHandle(
+                (new \Policyreporter\LazyBase\Factory\Doctrine)->openHandle(
                     $this->dbHandle(),
                     \Policyreporter\LazyBase\test\Doctrine::class
                 )

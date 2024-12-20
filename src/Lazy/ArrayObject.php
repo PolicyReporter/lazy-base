@@ -1,16 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Policyreporter\LazyBase\Lazy;
 
 class ArrayObject extends AbstractWrappingIterator
 {
-    protected $array;
     protected $iterator;
     protected $firstResult = true;
 
-    public function __construct($array)
+    public function __construct(
+        protected $array
+    )
     {
-        $this->array = $array;
         $this->iterator = new \ArrayIterator($this->array);
     }
 

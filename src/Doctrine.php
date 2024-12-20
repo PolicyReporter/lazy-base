@@ -21,7 +21,7 @@ abstract class Doctrine extends \Doctrine\DBAL\Connection
         $rolledBack = false;
         if ($this->isTransactionActive()) {
             $rolledBack = parent::rollBack();
-            if ($e !== null && $e instanceof \Exception) {
+            if ($e !== null and $e instanceof \Exception) {
                 // Yay the rollBack worked, but we still have a pending exception to throw
                 throw $e;
             }
@@ -53,7 +53,8 @@ abstract class Doctrine extends \Doctrine\DBAL\Connection
         array $params = [],
         $types = [],
         ?\Doctrine\DBAL\Cache\QueryCacheProfile $qcp = null
-    ): \Policyreporter\LazyBase\Lazy\AbstractIterator {
+    ): \Policyreporter\LazyBase\Lazy\AbstractIterator
+    {
         return $this->getNativeConnection()->run($sql, $params);
     }
 
@@ -62,7 +63,8 @@ abstract class Doctrine extends \Doctrine\DBAL\Connection
         array $params = [],
         $types = [],
         ?\Doctrine\DBAL\Cache\QueryCacheProfile $qcp = null
-    ): \Doctrine\Dbal\Result {
+    ): \Doctrine\Dbal\Result
+    {
         throw new \Exception('This method is not supported - use executeWrappedQuery()');
     }
 
@@ -83,9 +85,10 @@ abstract class Doctrine extends \Doctrine\DBAL\Connection
         }
 
         foreach ($types as $type) {
-            if ($type === self::PARAM_INT_ARRAY
-                || $type === self::PARAM_STR_ARRAY
-                || $type === self::PARAM_ASCII_STR_ARRAY
+            if (
+                    $type === self::PARAM_INT_ARRAY
+                or $type === self::PARAM_STR_ARRAY
+                or $type === self::PARAM_ASCII_STR_ARRAY
             ) {
                 return true;
             }
@@ -115,7 +118,8 @@ abstract class Doctrine extends \Doctrine\DBAL\Connection
         \Policyreporter\LazyBase\Doctrine\Statement $stmt,
         array $params,
         array $types
-    ): void {
+    ): void
+    {
         // Check whether parameters are positional or named. Mixing is not allowed.
         if (is_int(key($params))) {
             $bindIndex = 1;

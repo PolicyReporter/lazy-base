@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Policyreporter\LazyBase\Lazy\KeyedGenerator;
 
 // A simple function to dump a CSV into a \Generator
@@ -63,7 +66,7 @@ function readCsv($file, $mode, $newLine = false, $normalizeEol = false)
         $line = $file->fgetcsv();
         $i++;
 
-        if (is_null($line) || !count($line)) {
+        if (is_null($line) or !count($line)) {
             continue;
         }
         if ($firstLine === null) {

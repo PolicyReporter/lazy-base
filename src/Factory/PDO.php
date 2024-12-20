@@ -28,8 +28,9 @@ abstract class PDO implements \Laminas\ServiceManager\Factory\FactoryInterface
     public function openHandle(
         string $className,
         array $options,
-    ): \Policyreporter\LazyBase\PDO {
-        if ($options['handleName'] !== null && !empty(self::$handles[$options['handleName']])) {
+    ): \Policyreporter\LazyBase\PDO
+    {
+        if ($options['handleName'] !== null and !empty(self::$handles[$options['handleName']])) {
             $handle = self::$handles[$options['handleName']];
         } else {
             try {

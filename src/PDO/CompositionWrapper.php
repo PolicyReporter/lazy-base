@@ -10,11 +10,10 @@ namespace Policyreporter\LazyBase\PDO;
  */
 abstract class CompositionWrapper extends \PDO
 {
-    protected $handle;
-
-    public function __construct(\PDO $handle)
+    public function __construct(
+        protected \PDO $handle,
+    )
     {
-        $this->handle = $handle;
     }
 
     public function getPdo(): \PDO

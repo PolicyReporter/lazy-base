@@ -9,7 +9,8 @@ class Doctrine implements \Laminas\ServiceManager\Factory\FactoryInterface
     public function openHandle(
         \Policyreporter\LazyBase\PDO $handle,
         string $wrapperClass
-    ): \Policyreporter\LazyBase\Doctrine {
+    ): \Policyreporter\LazyBase\Doctrine
+    {
         return \Doctrine\DBAL\DriverManager::getConnection(
             [
                 'pdo' => $handle,
@@ -23,6 +24,7 @@ class Doctrine implements \Laminas\ServiceManager\Factory\FactoryInterface
         \Interop\Container\ContainerInterface $container,
         $requestedName,
         ?array $options = null
-    ) {
+    )
+    {
     }
 }
