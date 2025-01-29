@@ -43,6 +43,7 @@ class PDO extends PDO\CompositionWrapper
         protected ?\DebugBar\DebugBar $debugBar = null,
         protected ?string $emulatedQueryRegisteredName = null,
         protected ?string $explainQueryRegisteredName = null
+        protected \Psr\Log\AbstractLogger $logger = null
     )
     {
         parent::__construct($handle);

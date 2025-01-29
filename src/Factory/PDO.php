@@ -63,6 +63,7 @@ abstract class PDO implements \Laminas\ServiceManager\Factory\FactoryInterface
             $options['debugBar'] ?? null,
             $options['emulatedQueryRegisteredName'] ?? null,
             $options['explainQueryRegisteredName'] ?? null,
+            $options['logger'] ?? false,
         );
     }
 
