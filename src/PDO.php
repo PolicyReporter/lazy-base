@@ -18,11 +18,13 @@ use Exception;
  */
 class PDO extends PDO\CompositionWrapper
 {
-    private $wasInTransaction = false;
-    private $debugThreshold;
-    private $debugBar;
-
     private static $batchSize = 5000;
+
+    private float|bool $runTimer = false;
+    private float $bindParamsTimer = 0.0;
+    private float $explodeParamsTimer = 0.0;
+    private float $prepareTimer = 0.0;
+    private float $executeTimer = 0.0;
 
     protected function wrapStatement(\PDOStatement $statement): Lazy\AbstractIterator
     {
@@ -37,20 +39,16 @@ class PDO extends PDO\CompositionWrapper
      */
     public function __construct(
         \PDO $handle,
-        bool $isProduction = true,
-        int | bool $debugThreshold = false,
-        string $explainString = '',
-        ?\DebugBar\DebugBar $debugBar = null,
-        ?string $emulatedQueryRegisteredName = null,
-        ?string $explainQueryRegisteredName = null
+        private bool $isProduction = true,
+        private int | bool $debugThreshold = false,
+        private string $explainString = '',
+        private ?\DebugBar\DebugBar $debugBar = null,
+        private ?string $emulatedQueryRegisteredName = null,
+        private ?string $explainQueryRegisteredName = null,
+        private ?bool $logFunctionTimings = false,
     ) {
         parent::__construct($handle);
-        $this->isProduction = $isProduction;
-        $this->debugThreshold = $debugThreshold;
-        $this->explainString = $explainString;
-        $this->debugBar = $debugBar;
-        $this->emulatedQueryRegisteredName = $emulatedQueryRegisteredName;
-        $this->explainQueryRegisteredName = $explainQueryRegisteredName;
+
         // These options are required for this class to function properly
         // and would require careful consideration before modification, as such
         // we'll over-ride the values set on the pre-existing handle
@@ -62,6 +60,26 @@ class PDO extends PDO\CompositionWrapper
         ];
         foreach ($overrideOptions as $opt => $value) {
             $this->setAttribute($opt, $value);
+        }
+    }
+
+    public function __destruct()
+    {
+        if ($this->logFunctionTimings) {
+            $overall = $this->runTimer;
+            if ($overall !== false) {
+                $row = function ($name, $timer) use ($overall) {
+                    return sprintf('  %-14s %3d%% %f', $name, intval(100 * $timer / ($overall + .0000001)), $timer);
+                };
+                echo 'Runtime breakdown:'
+                    . PHP_EOL . $row('run', $this->runTimer)
+                    . PHP_EOL . $row('bindParams', $this->bindParamsTimer)
+                    . PHP_EOL . $row('explodeParams', $this->explodeParamsTimer)
+                    . PHP_EOL . $row('prepare', $this->prepareTimer)
+                    . PHP_EOL . $row('execute', $this->executeTimer)
+                    . PHP_EOL . $row('bindParams', $this->bindParamsTimer)
+                    . PHP_EOL;
+            }
         }
     }
 
@@ -148,19 +166,26 @@ class PDO extends PDO\CompositionWrapper
      */
     private function internalRun($query, $parameters = null, $forceDebug = false)
     {
+        $runStart = microtime(true);
         $prepareArguments = [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY];
         $extraneousParameters = [];
         if ($parameters !== null) {
             if (!is_array($parameters)) {
                 throw new \InvalidArgumentException('A scalar was passed as the argument to PDO::run');
             }
+            $explodeParamsStart = microtime(true);
             [$query, $parameters, $extraneousParameters] = self::explodeParams($query, $parameters);
+            $this->explodeParamsTimer += microtime(true) - $explodeParamsStart;
         }
         // Now that we've expanded any potential arrays with proper query replacements, we can
         // prepare the query for execution
+        $prepareStart = microtime(true);
         $stmt = new Lazy\PDOStatement($this->prepare($query, $prepareArguments));
+        $this->prepareTimer += microtime(true) - $prepareStart;
         if ($parameters !== null) {
+            $bindParamsStart = microtime(true);
             $stmt->bindParams($parameters);
+            $this->bindParamsTimer += microtime(true) - $bindParamsStart;
         }
         $this->wasInTransaction = $this->inTransaction();
         if ($this->debugThreshold) { // 0 (all queries) || false (no queries)
@@ -168,6 +193,7 @@ class PDO extends PDO\CompositionWrapper
         } else {
             $startTime = 0;
         }
+        $executeStart = microtime(true);
         try {
             // Run the statement
             $stmt->execute();
@@ -177,7 +203,10 @@ class PDO extends PDO\CompositionWrapper
                 $error['In addition following parameters had no matching replacement tokens'] = $extraneousParameters;
                 \jerror($error);
             }
+            $this->runTimer += microtime(true) - $runStart;
             throw $e;
+        } finally {
+            $this->executeTimer += microtime(true) - $executeStart;
         }
         // If false, skip all debugging, always
         if ($forceDebug
@@ -194,7 +223,9 @@ class PDO extends PDO\CompositionWrapper
                 $prepareArguments
             );
             if ($parameters !== null) {
+                $bindParamsStart = microtime(true);
                 $explainStmt->bindParams($parameters);
+                $this->bindParamsTimer += microtime(true) - $bindParamsStart;
             }
             try {
                 $explainStmt->execute();
@@ -227,6 +258,7 @@ class PDO extends PDO\CompositionWrapper
                 // exception handler earlier and we wouldn't be here
             }
         }
+        $this->runTimer += microtime(true) - $runStart;
         return $stmt;
     }
 
