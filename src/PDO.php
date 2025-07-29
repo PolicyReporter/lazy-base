@@ -186,7 +186,7 @@ class PDO extends PDO\CompositionWrapper
                 throw new \InvalidArgumentException('A scalar was passed as the argument to PDO::run');
             }
             $explodeParamsStart = microtime(true);
-            [$query, $parameters, $extraneousParameters] = self::explodeParams($query, $parameters);
+            [$query, $parameters, $extraneousParameters] = $this->explodeParams($query, $parameters);
             $this->explodeParamsTimer += microtime(true) - $explodeParamsStart;
         }
         // Now that we've expanded any potential arrays with proper query replacements, we can
@@ -337,7 +337,7 @@ class PDO extends PDO\CompositionWrapper
             }
         }
         if ($parameters !== null) {
-            [$query, $parameters] = self::explodeParams($query, $parameters);
+            [$query, $parameters] = $this->explodeParams($query, $parameters);
             $parameters = array_combine(
                 array_map(function ($v) {
                     return "/(?<!:){$v}(?![a-zA-Z0-9_])/";
@@ -362,7 +362,7 @@ class PDO extends PDO\CompositionWrapper
      *      The new parameter list
      *      Any parameters that we didn't find replacements for
      */
-    private static function explodeParams(string $query, array $parameters)
+    private function explodeParams(string $query, array $parameters)
     {
         $newParameters = $replacementList = $extraneousParameters = [];
         foreach ($parameters as $name => $value) {
@@ -382,19 +382,26 @@ class PDO extends PDO\CompositionWrapper
                 // This is not a param that needs replacing, retain it,
                 $newParameters[$bindingToken] = $value;
             } else {
-                // Then mix the indicies of the array into the name to
-                // create a bunch of unique keys for our individual elements
-                $newKeys = array_map(function ($v) use ($name) {
-                    return ":0{$name}__{$v}";
-                }, array_keys($value));
+                $newKeys = [];
+
                 $newParamertsStart = microtime(true);
+                foreach ($value as $k => $v) {
+                    // Then mix the indicies of the array into the name to
+                    // create a bunch of unique keys for our individual elements
+                    $replacementToken = ":0{$name}__{$k}";
+
+                    // Add the value to the list of parameters under the new name
+                    $newParameters[$replacementToken] = $v;
+
+                    // Record the new key onto a list for replacing
+                    $newKeys[] = $replacementToken;
+                }
+                // $newParameters = array_merge($newParameters, array_combine($newKeys, $value));
                 $this->newParametersTimer += microtime(true) - $newParamertsStart;
+
                 // Add a new 'to-be-replaced' mapping for the query substituting
                 // our new list of comma imploded names for the old name
                 $replacementList[$searchKey] = implode(", ", $newKeys);
-                // Finally combine the values with their new keys and add
-                // them to the list of parameters
-                $newParameters = array_merge($newParameters, array_combine($newKeys, $value));
             }
         }
         // Replace the tokens with any exploded tokens we've found
