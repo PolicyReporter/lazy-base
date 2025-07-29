@@ -25,6 +25,10 @@ class PDO extends PDO\CompositionWrapper
     private float $explodeParamsTimer = 0.0;
     private float $prepareTimer = 0.0;
     private float $executeTimer = 0.0;
+    private float $varNameAndTokenTimer = 0.0;
+    private float $newKeysTimer = 0.0;
+    private float $newParametersTimer = 0.0;
+    private float $pregReplaceTimer = 0.0;
 
     protected function wrapStatement(\PDOStatement $statement): Lazy\AbstractIterator
     {
@@ -66,15 +70,23 @@ class PDO extends PDO\CompositionWrapper
     public function __destruct()
     {
         if ($this->logFunctionTimings) {
-            $overall = $this->runTimer;
-            if ($overall !== false) {
-                $row = function ($name, $timer) use ($overall) {
-                    return sprintf('  %-14s %3d%% %f', $name, intval(100 * $timer / ($overall + .0000001)), $timer);
+            $runTimer = $this->runTimer;
+            $explodeParamsTimer = $this->explodeParamsTimer;
+            if ($runTimer !== false) {
+                $row = function ($name, $timer) use ($runTimer) {
+                    return sprintf('  %-15s   %3d%% %f', $name, intval(100 * $timer / ($runTimer + .0000001)), $timer);
+                };
+                $explodeRow = function ($name, $timer) use ($explodeParamsTimer) {
+                    return sprintf('    %-15s %3d%% %f', $name, intval(100 * $timer / ($explodeParamsTimer + .0000001)), $timer);
                 };
                 echo 'Runtime breakdown:'
                     . PHP_EOL . $row('run', $this->runTimer)
                     . PHP_EOL . $row('bindParams', $this->bindParamsTimer)
                     . PHP_EOL . $row('explodeParams', $this->explodeParamsTimer)
+                    . PHP_EOL . $explodeRow('varNameAndToken', $this->varNameAndTokenTimer)
+                    . PHP_EOL . $explodeRow('newKeys', $this->newKeysTimer)
+                    . PHP_EOL . $explodeRow('newParameters', $this->newParametersTimer)
+                    . PHP_EOL . $explodeRow('pregReplace', $this->pregReplaceTimer)
                     . PHP_EOL . $row('prepare', $this->prepareTimer)
                     . PHP_EOL . $row('execute', $this->executeTimer)
                     . PHP_EOL . $row('bindParams', $this->bindParamsTimer)
@@ -355,7 +367,9 @@ class PDO extends PDO\CompositionWrapper
         $newParameters = $replacementList = $extraneousParameters = [];
         foreach ($parameters as $name => $value) {
             // Grab both the colon prepended, and unprepended values as we'll need them both
+            $varNameAndTokenStart = microtime(true);
             [$bindingToken, $name] = self::varNameAndToken($name);
+            $this->varNameAndTokenTimer += microtime(true) - $varNameAndTokenStart;
             // Construct our replacement key, we also use this to verify the existence of the token
             // [a-zA-Z0-9_] matches legal characters for use in bind tokens i.e. :first-param is an
             // invalid bindToken
@@ -373,6 +387,8 @@ class PDO extends PDO\CompositionWrapper
                 $newKeys = array_map(function ($v) use ($name) {
                     return ":0{$name}__{$v}";
                 }, array_keys($value));
+                $newParamertsStart = microtime(true);
+                $this->newParametersTimer += microtime(true) - $newParamertsStart;
                 // Add a new 'to-be-replaced' mapping for the query substituting
                 // our new list of comma imploded names for the old name
                 $replacementList[$searchKey] = implode(", ", $newKeys);
@@ -382,7 +398,9 @@ class PDO extends PDO\CompositionWrapper
             }
         }
         // Replace the tokens with any exploded tokens we've found
+        $pregReplaceStart = microtime(true);
         $query = preg_replace(array_keys($replacementList), $replacementList, $query);
+        $this->pregReplaceTimer += microtime(true) - $pregReplaceStart;
         return [$query, $newParameters, $extraneousParameters];
     }
 
