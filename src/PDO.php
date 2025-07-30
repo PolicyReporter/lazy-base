@@ -336,17 +336,21 @@ class PDO extends PDO\CompositionWrapper
                 // This is not a param that needs replacing, retain it,
                 $newParameters[$bindingToken] = $value;
             } else {
-                // Then mix the indicies of the array into the name to
-                // create a bunch of unique keys for our individual elements
-                $newKeys = array_map(function ($v) use ($name) {
-                    return ":0{$name}__{$v}";
-                }, array_keys($value));
+                $newKeys = [];
+                foreach ($value as $k => $v) {
+                    // Then mix the indicies of the array into the name to
+                    // create a bunch of unique keys for our individual elements
+                    $replacementToken = ":0{$name}__{$k}";
+
+                    // Add the value to the list of parameters under the new name
+                    $newParameters[$replacementToken] = $v;
+
+                    // Record the new key onto a list for replacing
+                    $newKeys[] = $replacementToken;
+                }
                 // Add a new 'to-be-replaced' mapping for the query substituting
                 // our new list of comma imploded names for the old name
                 $replacementList[$searchKey] = implode(", ", $newKeys);
-                // Finally combine the values with their new keys and add
-                // them to the list of parameters
-                $newParameters = array_merge($newParameters, array_combine($newKeys, $value));
             }
         }
         // Replace the tokens with any exploded tokens we've found
