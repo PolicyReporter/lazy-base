@@ -49,7 +49,7 @@ class DatabaseConnectionTrace
         }
 
         //log route
-        $logs["route"] = $_SERVER["REQUEST_URI"] ?? $_SERVER["REDIRECT_SCRIPT_URL"] ?? "";
+        $logs["route"] = $_SERVER["REQUEST_URI"] ?? $_SERVER["REDIRECT_SCRIPT_URL"] ?? $_SERVER["argv"][1] ?? "";
 
         ($this->logger)("DB Connection Trace", $logs, false);
     }
