@@ -6,6 +6,7 @@ namespace Policyreporter\LazyBase\Doctrine;
 
 class Connection implements \Doctrine\DBAL\Driver\ServerInfoAwareConnection
 {
+    public $_config;
     private $connection;
 
     public function __construct(\PDO $connection)
