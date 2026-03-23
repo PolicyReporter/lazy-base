@@ -18,6 +18,10 @@ use Exception;
  */
 class PDO extends PDO\CompositionWrapper
 {
+    public $isProduction;
+    public $explainString;
+    public $emulatedQueryRegisteredName;
+    public $explainQueryRegisteredName;
     private $wasInTransaction = false;
     private $debugThreshold;
     private $debugBar;
