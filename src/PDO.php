@@ -287,7 +287,7 @@ class PDO extends PDO\CompositionWrapper
      *
      * @return string The assembled emulated query
      */
-    public function assembleEmulatedQuery($query, array $parameters = null)
+    public function assembleEmulatedQuery($query, ?array $parameters = null)
     {
         if ($this->isProduction) {
             try {
@@ -370,7 +370,7 @@ class PDO extends PDO\CompositionWrapper
      * @return bool(true) Whether the rollBack was successful, according to PDO::rollBack
      *         which should always be true @see http://php.net/manual/en/pdo.rollback.php
      */
-    public function rollBack(\Throwable $e = null)
+    public function rollBack(?\Throwable $e = null)
     {
         $rolledBack = false;
         if ($this->inTransaction()) {

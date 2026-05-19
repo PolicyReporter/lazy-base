@@ -27,55 +27,55 @@ abstract class CompositionWrapper extends \PDO
         return $this->handle->$functionName(...$arguments);
     }
 
-    public function beginTransaction()
+    public function beginTransaction(): bool
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public function commit()
+    public function commit(): bool
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public function errorCode()
+    public function errorCode(): ?string
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public function errorInfo()
+    public function errorInfo(): array
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public function exec($statement)
+    public function exec(string $statement): int|false
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public function getAttribute($attribute)
+    public function getAttribute(int $attribute): mixed
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public static function getAvailableDrivers()
+    public static function getAvailableDrivers(): array
+    {
+        return parent::getAvailableDrivers();
+    }
+    public function inTransaction(): bool
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public function inTransaction()
+    public function lastInsertId(?string $name = null): string|false
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public function lastInsertId($name = null)
+    public function prepare(string $query, array $options = []): \PDOStatement|false
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public function prepare(string $query, $options = [])
+    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs): \PDOStatement|false
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public function query(string $query, ?int $fetchMode = null, ...$fetchModeArgs)
+    public function quote(string $string, int $type = \PDO::PARAM_STR): string|false
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public function quote($string, $type = \PDO::PARAM_STR)
-    {
-        return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
-    }
-    public function rollBack()
+    public function rollBack(): bool
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
@@ -83,7 +83,7 @@ abstract class CompositionWrapper extends \PDO
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public function setAttribute($attribute, $value)
+    public function setAttribute(int $attribute, mixed $value): bool
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }

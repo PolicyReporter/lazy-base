@@ -13,7 +13,7 @@ class Stream implements \Psr\Http\Message\StreamInterface
         $this->stream = $stream;
     }
 
-    public function readLine(int $maxLength = null): string
+    public function readLine(?int $maxLength = null): string
     {
         return \rtrim(self::readLineFrom($this, $maxLength), "\n");
     }
@@ -22,7 +22,7 @@ class Stream implements \Psr\Http\Message\StreamInterface
      * @see \GuzzleHttp\Psr7\readline
      * Recorded here to avoid a dependency on an internal guzzle function
      */
-    private static function readLineFrom(\Psr\Http\Message\StreamInterface $stream, $maxLength = null): string
+    private static function readLineFrom(\Psr\Http\Message\StreamInterface $stream, ?int $maxLength = null): string
     {
         $buffer = '';
         $size = 0;
