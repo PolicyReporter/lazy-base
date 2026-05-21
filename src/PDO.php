@@ -76,14 +76,14 @@ class PDO extends PDO\CompositionWrapper
      * params as per the parent function
      * @return Lazy\PDOStatement The wrapped result handle
      */
-    public function prepare($statement, $options = null)
+    public function prepare(string $statement, array $options = []): \PDOStatement|false
     {
-        return $this->wrapStatement($this->redirectToHandle(__FUNCTION__, ...func_get_args()));
+        return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
 
-    public function query(string $query, ?int $fetchMode = null, ...$fetchModeArgs)
+    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs): \PDOStatement|false
     {
-        return $this->wrapStatement($this->redirectToHandle(__FUNCTION__, ...func_get_args()));
+        return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
 
     /**
@@ -193,10 +193,10 @@ class PDO extends PDO\CompositionWrapper
                     $this->assembleEmulatedQuery($query, $parameters)
                 );
             }
-            $explainStmt = $this->prepare(
+            $explainStmt = new Lazy\PDOStatement($this->prepare(
                 "EXPLAIN {$this->explainString} {$query}",
                 $prepareArguments
-            );
+            ));
             if ($parameters !== null) {
                 $explainStmt->bindParams($parameters);
             }
@@ -370,7 +370,7 @@ class PDO extends PDO\CompositionWrapper
      * @return bool(true) Whether the rollBack was successful, according to PDO::rollBack
      *         which should always be true @see http://php.net/manual/en/pdo.rollback.php
      */
-    public function rollBack(?\Throwable $e = null)
+    public function rollBack(?\Throwable $e = null): bool
     {
         $rolledBack = false;
         if ($this->inTransaction()) {
@@ -395,7 +395,7 @@ class PDO extends PDO\CompositionWrapper
      *
      * @return bool Whether the commit was successful
      */
-    public function commit()
+    public function commit(): bool
     {
         $result = $this->handle->commit();
         $this->wasInTransaction = false;
