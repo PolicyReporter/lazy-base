@@ -16,7 +16,7 @@ abstract class Doctrine extends \Doctrine\DBAL\Connection
      * @return bool(true) Whether the rollBack was successful, according to PDO::rollBack
      *         which should always be true @see http://php.net/manual/en/pdo.rollback.php
      */
-    public function rollBack(\Exception $e = null)
+    public function rollBack(?\Exception $e = null)
     {
         $rolledBack = false;
         if ($this->isTransactionActive()) {

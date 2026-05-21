@@ -18,7 +18,7 @@ class DatabaseConnectionTrace
         // Callable
         string | array $logger,
         string $handleName,
-        float $microTime = null
+        ?float $microTime = null
     ) {
         $this->pdo = $pdo;
         $this->logger = $logger;

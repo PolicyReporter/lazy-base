@@ -287,7 +287,7 @@ abstract class AbstractIterator implements \Iterator, \Countable
      * @throws \Exception if we've iterated beyond end
      * @return mixed
      */
-    public function current()
+    public function current(): mixed
     {
         if ($this->currentResult === null) {
             // Some iterators may need to peek at a result to grab these,
@@ -329,7 +329,7 @@ abstract class AbstractIterator implements \Iterator, \Countable
      *
      * @return mixed
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->index;
     }
