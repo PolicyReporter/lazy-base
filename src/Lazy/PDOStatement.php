@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 namespace Policyreporter\LazyBase\Lazy;
 
 require_once('../policyr/module/Exception/src/Exception/AbstractException.php');
@@ -10,84 +9,47 @@ require_once('../policyr/module/Exception/src/Exception/System.php');
 require_once('../policyr/module/Exception/src/Exception/System/NoData.php');
 
 /**
- * This is an inner class for PDO only, do not use directly
+ * PDO statement class instantiated by PDO via ATTR_STATEMENT_CLASS.
  *
- * It's important to note that due to the way PDO works, any additional
- * functions designed here will be available on all PDOStatement return
- * objects generated from a registered handle, even if the run() method
- * is not used to generate them.  This is a good place for any such utility
- * methods, and this class can be extended to support relevant interfaces
- * as desired (i.e. Countable or ArrayAccess) I've refrained from such so
- * far for simplicities sake and since they go against desired usage, but
- * such extensions are available
+ * Do not construct with `new`; use Policyreporter\LazyBase\PDO::prepare() or run().
  */
-class PDOStatement extends AbstractIterator
+class PDOStatement extends \PDOStatement implements \Countable
 {
     use \Policyreporter\LazyBase\Deprecated;
+    use IteratorBehavior;
 
-    protected $statement;
-
-    /**
-     * Standard PDOStatement constructor wrapper to capture
-     * the live database handle
-     */
-    public function __construct($statement)
+    protected function __construct()
     {
-        $this->statement = $statement;
     }
 
     /**
-     * Pass through any method calls we haven't overridden since we're not longer extending \PDOStatement
-     *
-     * @param string $name The name of the function
-     * @param mixed[] $arguments THe arguments to the function
+     * Lazy iteration (parent \PDOStatement is IteratorAggregate; cannot also implement Iterator).
      */
-    public function __call(string $name, array $arguments)
+    public function getIterator(): \Generator
     {
-        return $this->statement->$name(...$arguments);
+        for ($this->rewind(); $this->valid(); $this->next()) {
+            yield $this->key() => $this->current();
+        }
     }
 
-    /**
-     * Provide a list of columns that we allow to be duplicated
-     *
-     * @return string[] The columns so allowed
-     */
     protected static function anonymousColumnNames(): array
     {
         return ['?column?'];
     }
 
-    /**
-     * Garner a count of how many columns exist in the result set
-     *
-     * Since this data is tracked by \PDOStatement already, we'll just use their value
-     *
-     * @return int The number of columns
-     */
     public function columnCount(): int
     {
-        return $this->statement->columnCount();
+        return parent::columnCount();
     }
 
-    /**
-     * Return the next result row from our query iterator, if possible
-     *
-     * @throws \Exception If no data remains to be viewed
-     * @return mixed[] The next raw result row
-     */
     protected function fetchCurrent(): array
     {
-        if (false === ($nextRow = $this->statement->fetch(\PDO::FETCH_NUM, \PDO::FETCH_ORI_NEXT))) {
+        if (false === ($nextRow = parent::fetch(\PDO::FETCH_NUM, \PDO::FETCH_ORI_NEXT))) {
             throw new \Exception\System\NoData('No valid data remains');
         }
         return $nextRow;
     }
 
-    /**
-     * Throws an exception if not called while sitting on element 0
-     *
-     * @throws System\Exception this class of iterator cannot be rewound
-     */
     public function rewind(): void
     {
         if ($this->index !== 0) {
@@ -95,24 +57,41 @@ class PDOStatement extends AbstractIterator
         }
     }
 
-    /**
-     * Bind several parameters to this statment, this function suppresses any
-     * errors relating to binding unmatched parameters (overbinding), infers
-     * SQL type from PHP literal type (1 !== "1") and will append a colon to
-     * any replacements missing it
-     *
-     * @param mixed[] $parameters The parameters to bind
-     * @return this
-     */
     public function bindParams(array $parameters): self
     {
         foreach ($parameters as $name => $value) {
             if ($name[0] !== ':') {
                 $name = ":{$name}";
             }
-            $this->statement->bindValue($name, $value, self::getPdoType($value));
+            parent::bindValue($name, $value, self::getPdoType($value));
         }
         return $this;
+    }
+
+    protected function rawColumnNames(): array
+    {
+        $columnCount = parent::columnCount();
+        $names = [];
+        for ($i = 0; $i < $columnCount; $i++) {
+            $names[] = $this->getColumnMeta($i)['name'];
+        }
+        return $names;
+    }
+
+    public function count(): int
+    {
+        return $this->rowCount();
+    }
+
+    /**
+     * Default mode matches lazy realize(); other modes delegate to PDO.
+     */
+    public function fetchAll(int $mode = \PDO::FETCH_DEFAULT, mixed ...$args): array
+    {
+        if ($args === [] && ($mode === \PDO::FETCH_DEFAULT || $mode === \PDO::FETCH_ASSOC)) {
+            return $this->realize();
+        }
+        return parent::fetchAll($mode, ...$args);
     }
 
     public function one()
@@ -139,40 +118,6 @@ class PDOStatement extends AbstractIterator
         return call_user_func_array([$this, 'toColumn'], func_get_args());
     }
 
-    /**
-     * Return a list of column names contained in the result set
-     *
-     * @return string[] The column names
-     */
-    public function rawColumnNames(): array
-    {
-        $columnCount = $this->columnCount();
-        $names = [];
-        for ($i = 0; $i < $columnCount; $i++) {
-            $names[] = $this->getColumnMeta($i)['name'];
-        }
-        return $names;
-    }
-
-    /**
-     * Return the rowCount as a \Countable interface
-     *
-     * @return int The count of rows
-     */
-    public function count(): int
-    {
-        return $this->rowCount();
-    }
-
-    /**
-     * Get the PDO type constant for a given value
-     *
-     * @throws Exception if the type has no PDO equivalent
-     * or if we do not support binding that type
-     *
-     * @param mixed $variable The variable to inspect
-     * @return PDO::PARAM_* constant
-     */
     public static function getPdoType($variable): int
     {
         $type = \gettype($variable);
@@ -180,7 +125,6 @@ class PDOStatement extends AbstractIterator
             case 'string':
                 return \PDO::PARAM_STR;
             case 'boolean':
-                // MySQL doesn't have boolean types, but other dbs do support `true` and `false`
                 return \PDO::PARAM_INT;
             case 'integer':
             case 'double':

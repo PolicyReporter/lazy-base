@@ -28,11 +28,6 @@ class PDO extends PDO\CompositionWrapper
 
     private static $batchSize = 5000;
 
-    protected function wrapStatement(\PDOStatement $statement): Lazy\AbstractIterator
-    {
-        return new Lazy\PDOStatement($statement);
-    }
-
     /**
      * Wrap a \PDO and set some defaults for our usage
      *
@@ -63,6 +58,7 @@ class PDO extends PDO\CompositionWrapper
             \PDO::ATTR_STRINGIFY_FETCHES => false,
             \PDO::ATTR_EMULATE_PREPARES => false,
             \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+            \PDO::ATTR_STATEMENT_CLASS => [Lazy\PDOStatement::class, []],
         ];
         foreach ($overrideOptions as $opt => $value) {
             $this->setAttribute($opt, $value);
@@ -162,7 +158,7 @@ class PDO extends PDO\CompositionWrapper
         }
         // Now that we've expanded any potential arrays with proper query replacements, we can
         // prepare the query for execution
-        $stmt = new Lazy\PDOStatement($this->prepare($query, $prepareArguments));
+        $stmt = $this->prepare($query, $prepareArguments);
         if ($parameters !== null) {
             $stmt->bindParams($parameters);
         }
@@ -193,10 +189,10 @@ class PDO extends PDO\CompositionWrapper
                     $this->assembleEmulatedQuery($query, $parameters)
                 );
             }
-            $explainStmt = new Lazy\PDOStatement($this->prepare(
+            $explainStmt = $this->prepare(
                 "EXPLAIN {$this->explainString} {$query}",
                 $prepareArguments
-            ));
+            );
             if ($parameters !== null) {
                 $explainStmt->bindParams($parameters);
             }
