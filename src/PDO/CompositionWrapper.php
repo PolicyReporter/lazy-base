@@ -63,11 +63,13 @@ abstract class CompositionWrapper extends \PDO
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public function prepare(string $query, array $options = []): \PDOStatement|false
+    #[\ReturnTypeWillChange]
+    public function prepare(string $query, array $options = [])
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
-    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs): \PDOStatement|false
+    #[\ReturnTypeWillChange]
+    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs)
     {
         return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
     }
