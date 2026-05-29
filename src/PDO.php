@@ -76,14 +76,14 @@ class PDO extends PDO\CompositionWrapper
      * params as per the parent function
      * @return Lazy\PDOStatement The wrapped result handle
      */
-    public function prepare(string $statement, array $options = []): \PDOStatement|false
+    public function prepare(string $statement, array $options = [])
     {
-        return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
+        return $this->wrapStatement($this->redirectToHandle(__FUNCTION__, ...func_get_args()));
     }
 
-    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs): \PDOStatement|false
+    public function query(string $query, ?int $fetchMode = null, mixed ...$fetchModeArgs)
     {
-        return $this->redirectToHandle(__FUNCTION__, ...func_get_args());
+        return $this->wrapStatement($this->redirectToHandle(__FUNCTION__, ...func_get_args()));
     }
 
     /**
@@ -193,10 +193,10 @@ class PDO extends PDO\CompositionWrapper
                     $this->assembleEmulatedQuery($query, $parameters)
                 );
             }
-            $explainStmt = new Lazy\PDOStatement($this->prepare(
+            $explainStmt = $this->prepare(
                 "EXPLAIN {$this->explainString} {$query}",
                 $prepareArguments
-            ));
+            );
             if ($parameters !== null) {
                 $explainStmt->bindParams($parameters);
             }
